@@ -1,0 +1,125 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "baker-berry-library",
+        "geojson_id": "baker-berry-library",
+        "official_name": "Baker-Berry Library"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-72.2895, 43.7058],
+            [-72.2879, 43.7058],
+            [-72.2879, 43.7050],
+            [-72.2895, 43.7050],
+            [-72.2895, 43.7058]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "collis-center",
+        "geojson_id": "collis-center",
+        "official_name": "Collis Center"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-72.2872, 43.7052],
+            [-72.2858, 43.7052],
+            [-72.2858, 43.7044],
+            [-72.2872, 43.7044],
+            [-72.2872, 43.7052]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "hopkins-center",
+        "geojson_id": "hopkins-center",
+        "official_name": "Hopkins Center"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-72.2888, 43.7046],
+            [-72.2876, 43.7046],
+            [-72.2876, 43.7038],
+            [-72.2888, 43.7038],
+            [-72.2888, 43.7046]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "class-of-1953-commons",
+        "geojson_id": "class-of-1953-commons",
+        "official_name": "Class of 1953 Commons"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-72.2868, 43.7040],
+            [-72.2854, 43.7040],
+            [-72.2854, 43.7032],
+            [-72.2868, 43.7032],
+            [-72.2868, 43.7040]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "life-sciences-center",
+        "geojson_id": "life-sciences-center",
+        "official_name": "Life Sciences Center"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-72.2902, 43.7036],
+            [-72.2888, 43.7036],
+            [-72.2888, 43.7028],
+            [-72.2902, 43.7028],
+            [-72.2902, 43.7036]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "cummings-hall",
+        "geojson_id": "cummings-hall",
+        "official_name": "Cummings Hall"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-72.2910, 43.7048],
+            [-72.2898, 43.7048],
+            [-72.2898, 43.7040],
+            [-72.2910, 43.7040],
+            [-72.2910, 43.7048]
+          ]
+        ]
+      }
+    }
+  ]
+}

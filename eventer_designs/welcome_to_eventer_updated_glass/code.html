@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Welcome to Eventer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Sora:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fcf9f8",
+                    "on-secondary-fixed-variant": "#5a00c6",
+                    "surface-container-high": "#ebe7e7",
+                    "on-error-container": "#93000a",
+                    "cat-academic": "#00693E",
+                    "error-container": "#ffdad6",
+                    "cat-social": "#7C3AED",
+                    "glass-bg-dark": "rgba(30, 30, 30, 0.7)",
+                    "on-surface": "#1c1b1b",
+                    "on-primary-container": "#8fe6af",
+                    "on-tertiary-container": "#ffc6c6",
+                    "secondary": "#712ae2",
+                    "surface-container-low": "#f6f3f2",
+                    "surface-variant": "#e5e2e1",
+                    "primary": "#004e2d",
+                    "inverse-primary": "#82d8a3",
+                    "surface": "#fcf9f8",
+                    "secondary-container": "#8a4cfc",
+                    "on-background": "#1c1b1b",
+                    "on-secondary-fixed": "#25005a",
+                    "cat-food": "#EA6C00",
+                    "tertiary-fixed": "#ffdad9",
+                    "tertiary-container": "#944145",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#3f020a",
+                    "primary-fixed-dim": "#82d8a3",
+                    "background": "#fcf9f8",
+                    "surface-container": "#f0edec",
+                    "surface-dim": "#dcd9d9",
+                    "on-surface-variant": "#3f4941",
+                    "secondary-fixed": "#eaddff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#d2bbff",
+                    "tertiary-fixed-dim": "#ffb3b3",
+                    "outline": "#6f7a71",
+                    "primary-fixed": "#9ef5be",
+                    "cat-sports": "#D91B5C",
+                    "primary-container": "#00693e",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#086c41",
+                    "glass-bg-light": "rgba(255, 255, 255, 0.15)",
+                    "glass-border": "rgba(255, 255, 255, 0.15)",
+                    "cat-arts": "#00B4D8",
+                    "tertiary": "#762a2f",
+                    "on-primary-fixed": "#002110",
+                    "on-tertiary-fixed-variant": "#7a2d32",
+                    "inverse-on-surface": "#f3f0ef",
+                    "outline-variant": "#bec9bf",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#313030",
+                    "on-primary-fixed-variant": "#00522f",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-secondary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-mobile": "12px",
+                    "stack-md": "16px",
+                    "radius-glass": "24px",
+                    "stack-xs": "4px",
+                    "stack-sm": "8px",
+                    "stack-xl": "40px",
+                    "stack-lg": "24px",
+                    "margin-mobile": "20px"
+            },
+            "fontFamily": {
+                    "label-bold": ["Inter"],
+                    "display-lg-mobile": ["Sora"],
+                    "headline-sm": ["Sora"],
+                    "headline-sm-mobile": ["Sora"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Sora"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Sora"]
+            },
+            "fontSize": {
+                    "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-sm": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-sm-mobile": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-sm": ["11px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow: hidden;
+        }
+        .glass-card {
+            backdrop-filter: blur(52px);
+            -webkit-backdrop-filter: blur(52px);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+        }
+        .glass-button {
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 0.5px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .glass-overlay {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: floating 4s ease-in-out infinite;
+        }
+        .active-dot {
+            width: 24px;
+            transition: all 0.3s ease;
+        }
+        .interaction-press:active {
+            transform: scale(0.96);
+            transition: transform 0.15s ease-out;
+        }
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-surface-bright text-on-surface selection:bg-primary/20">
+<!-- Background Canvas: Blurred Campus Map -->
+<div class="fixed inset-0 z-0">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface-bright/40 z-10"></div>
+<div class="w-full h-full scale-110 filter blur-[4px] opacity-90" data-alt="An expansive, high-angle illustrative map of a prestigious university campus featuring lush green lawns, gothic stone architecture, and modern glass academic buildings. The lighting is soft morning sun, creating long, gentle shadows. The visual style is clean and architectural, utilizing a professional palette of Dartmouth Green, slate grays, and warm ivories. The overall mood is scholarly yet vibrant, suggesting an active community environment." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuASh1hxf0rXa1j1LMXNBVNd1x7h9LNyRJsflSfwyoanSRFeVTY7x_p1PBHofiCNtiLEHtjIuxYyI8tCoWTFSbixbA0X4xkPoj4jFjEAiuXgnCDsSKH-A13o3BdOnQfsvydKvLV_YaQPwNNqajKEBMMNeAPe0ky4pC16OLdoJhwrCDON14kCsH3tpoDy_uMjVwQFDdSthcmJAe3Mqr66P8pqRtuurHkl9lV-wIABPBBlQHkFtt34QpRmkumrRtH9127ddzT5BdpqahI')">
+</div>
+</div>
+<!-- Main Content Canvas -->
+<main class="relative z-20 w-full h-screen flex flex-col px-margin-mobile pt-16 pb-12 overflow-hidden">
+<!-- Top Action Row -->
+<div class="flex justify-end w-full">
+<button class="glass-button font-label-bold text-label-bold text-primary px-5 py-2.5 rounded-full hover:bg-white/10 transition-colors uppercase tracking-widest interaction-press shadow-sm">
+                Skip
+            </button>
+</div>
+<!-- Centered Glass Onboarding Card -->
+<div class="flex-1 flex items-center justify-center">
+<div class="glass-card w-full max-w-sm rounded-[32px] p-stack-xl flex flex-col items-center text-center">
+<!-- App Icon Container -->
+<div class="w-24 h-24 bg-primary rounded-radius-glass flex items-center justify-center mb-stack-lg shadow-lg animate-float">
+<span class="material-symbols-outlined text-on-primary text-[48px]" data-icon="event_note" style="font-variation-settings: 'FILL' 1;">
+                        event_note
+                    </span>
+</div>
+<!-- Messaging -->
+<h1 class="font-display-lg-mobile text-display-lg-mobile text-on-surface mb-stack-md leading-tight">
+                    Welcome to Eventer
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant px-4 leading-relaxed">
+                    Your companion for never missing out on campus life.
+                </p>
+<!-- 3-Dot Progress Indicator -->
+<div class="flex gap-2 mt-stack-xl">
+<div class="h-1.5 active-dot rounded-full bg-primary"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-primary/20"></div>
+<div class="h-1.5 w-1.5 rounded-full bg-primary/20"></div>
+</div>
+</div>
+</div>
+<!-- Bottom Action CTA -->
+<div class="w-full flex justify-center">
+<button class="interaction-press w-full max-w-sm h-16 bg-primary text-on-primary rounded-full font-headline-sm-mobile text-headline-sm-mobile shadow-xl shadow-primary/30 flex items-center justify-center gap-2 hover:opacity-95 transition-opacity" onclick="window.location.reload()">
+<span>Let's Go</span>
+<span class="material-symbols-outlined text-on-primary" data-icon="arrow_forward">
+                    arrow_forward
+                </span>
+</button>
+</div>
+</main>
+<!-- Optional Visual Atmospheric Effects -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-30 mix-blend-soft-light opacity-40">
+<div class="absolute top-[10%] left-[-15%] w-[70%] h-[50%] bg-primary blur-[160px] rounded-full"></div>
+<div class="absolute bottom-[5%] right-[-15%] w-[60%] h-[60%] bg-cat-social blur-[140px] rounded-full"></div>
+</div>
+<script>
+        // Simple Interaction logic for button ripple or feedback
+        document.querySelectorAll('.interaction-press').forEach(button => {
+            button.addEventListener('touchstart', () => {
+                button.style.transform = 'scale(0.96)';
+            });
+            button.addEventListener('touchend', () => {
+                button.style.transform = 'scale(1)';
+            });
+            button.addEventListener('mousedown', () => {
+                button.style.transform = 'scale(0.96)';
+            });
+            button.addEventListener('mouseup', () => {
+                button.style.transform = 'scale(1)';
+            });
+        });
+
+        // Background parallax effect
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth / 2) / 60;
+            const moveY = (e.clientY - window.innerHeight / 2) / 60;
+            const bg = document.querySelector('.fixed.inset-0.z-0 div[data-alt]');
+            if(bg) bg.style.transform = `scale(1.1) translate(${moveX}px, ${moveY}px)`;
+        });
+    </script>
+</body></html>

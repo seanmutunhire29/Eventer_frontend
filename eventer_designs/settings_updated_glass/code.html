@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Eventer - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Sora:wght@600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Sora:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fcf9f8",
+                    "on-secondary-fixed-variant": "#5a00c6",
+                    "surface-container-high": "#ebe7e7",
+                    "on-error-container": "#93000a",
+                    "cat-academic": "#00693E",
+                    "error-container": "#ffdad6",
+                    "cat-social": "#7C3AED",
+                    "glass-bg-dark": "rgba(30, 30, 30, 0.7)",
+                    "on-surface": "#1c1b1b",
+                    "on-primary-container": "#8fe6af",
+                    "on-tertiary-container": "#ffc6c6",
+                    "secondary": "#712ae2",
+                    "surface-container-low": "#f6f3f2",
+                    "surface-variant": "#e5e2e1",
+                    "primary": "#004e2d",
+                    "inverse-primary": "#82d8a3",
+                    "surface": "#fcf9f8",
+                    "secondary-container": "#8a4cfc",
+                    "on-background": "#1c1b1b",
+                    "on-secondary-fixed": "#25005a",
+                    "cat-food": "#EA6C00",
+                    "tertiary-fixed": "#ffdad9",
+                    "tertiary-container": "#944145",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#3f020a",
+                    "primary-fixed-dim": "#82d8a3",
+                    "background": "#fcf9f8",
+                    "surface-container": "#f0edec",
+                    "surface-dim": "#dcd9d9",
+                    "on-surface-variant": "#3f4941",
+                    "secondary-fixed": "#eaddff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed-dim": "#d2bbff",
+                    "tertiary-fixed-dim": "#ffb3b3",
+                    "outline": "#6f7a71",
+                    "primary-fixed": "#9ef5be",
+                    "cat-sports": "#D91B5C",
+                    "primary-container": "#00693e",
+                    "on-secondary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#086c41",
+                    "glass-bg-light": "rgba(255, 255, 255, 0.15)",
+                    "glass-border": "rgba(255, 255, 255, 0.15)",
+                    "cat-arts": "#00B4D8",
+                    "tertiary": "#762a2f",
+                    "on-primary-fixed": "#002110",
+                    "on-tertiary-fixed-variant": "#7a2d32",
+                    "inverse-on-surface": "#f3f0ef",
+                    "outline-variant": "#bec9bf",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#313030",
+                    "on-primary-fixed-variant": "#00522f",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-secondary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter-mobile": "12px",
+                    "stack-md": "16px",
+                    "radius-glass": "24px",
+                    "stack-xs": "4px",
+                    "stack-sm": "8px",
+                    "stack-xl": "40px",
+                    "stack-lg": "24px",
+                    "margin-mobile": "20px"
+            },
+            "fontFamily": {
+                    "label-bold": ["Inter"],
+                    "display-lg-mobile": ["Sora"],
+                    "headline-sm": ["Sora"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Sora"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Sora"],
+                    "headline-sm-mobile": ["Sora"]
+            },
+            "fontSize": {
+                    "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-sm": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-sm": ["11px", {"lineHeight": "1", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-sm-mobile": ["20px", {"lineHeight": "1.3", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+            background-color: #fcf9f8;
+            background-image: radial-gradient(at 10% 10%, rgba(0, 105, 62, 0.12) 0px, transparent 40%),
+                              radial-gradient(at 90% 90%, rgba(124, 58, 237, 0.08) 0px, transparent 40%),
+                              radial-gradient(at 50% 50%, rgba(217, 27, 92, 0.05) 0px, transparent 60%);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(54px);
+            -webkit-backdrop-filter: blur(54px);
+            border: 0.8px solid rgba(255, 255, 255, 0.2);
+            border-radius: 32px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.03);
+        }
+
+        .glass-interactive {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 0.5px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .toggle-switch:checked {
+            background-color: #00693E;
+        }
+
+        .toggle-switch {
+            appearance: none;
+            width: 48px;
+            height: 24px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 9999px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: 0.5px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .toggle-switch:checked::after {
+            transform: translateX(24px);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .active-chip {
+            background: rgba(0, 78, 45, 0.1);
+            border-color: rgba(0, 78, 45, 0.2);
+            color: #004e2d;
+        }
+
+        .settings-scroll {
+            padding-bottom: 120px;
+        }
+
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-on-surface" data-gr-ext-installed="" data-new-gr-c-s-check-loaded="9.75.0">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-white/10 backdrop-blur-[48px] border-b border-white/10">
+<div class="flex items-center gap-4">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-display-lg-mobile text-display-lg-mobile text-primary">Settings</h1>
+</div>
+<div class="w-8"></div>
+</header>
+<!-- Content Canvas -->
+<main class="pt-20 px-margin-mobile settings-scroll">
+<!-- Appearance Section -->
+<section class="mb-stack-lg">
+<h2 class="font-label-bold text-label-bold text-outline uppercase tracking-widest mb-stack-sm px-2">Appearance</h2>
+<div class="glass-card p-stack-md flex flex-col gap-stack-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-stack-sm">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="palette">palette</span>
+<span class="font-body-md text-body-md font-semibold">Theme</span>
+</div>
+<div class="flex glass-interactive p-1 rounded-full border border-white/10">
+<button class="px-4 py-1.5 rounded-full font-label-bold text-label-bold bg-primary text-on-primary transition-all shadow-sm">Light</button>
+<button class="px-4 py-1.5 rounded-full font-label-bold text-label-bold text-on-surface-variant hover:bg-white/10 transition-colors">Dark</button>
+<button class="px-4 py-1.5 rounded-full font-label-bold text-label-bold text-on-surface-variant hover:bg-white/10 transition-colors">System</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Notifications Section -->
+<section class="mb-stack-lg">
+<h2 class="font-label-bold text-label-bold text-outline uppercase tracking-widest mb-stack-sm px-2">Notifications</h2>
+<div class="glass-card p-stack-md flex flex-col gap-stack-lg">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-semibold">Push Notifications</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Stay updated on new events</span>
+</div>
+<input checked="" class="toggle-switch" type="checkbox"/>
+</div>
+<hr class="border-white/10"/>
+<div>
+<span class="font-body-md text-body-md font-semibold block mb-stack-sm">Default Reminder</span>
+<div class="grid grid-cols-3 gap-2">
+<button class="py-2 rounded-xl border border-white/10 glass-btn font-label-bold text-label-bold text-on-surface-variant hover:bg-white/20">5m</button>
+<button class="py-2 rounded-xl border border-primary/30 bg-primary/10 backdrop-blur-md font-label-bold text-label-bold text-primary">10m</button>
+<button class="py-2 rounded-xl border border-white/10 glass-btn font-label-bold text-label-bold text-on-surface-variant hover:bg-white/20">15m</button>
+<button class="py-2 rounded-xl border border-white/10 glass-btn font-label-bold text-label-bold text-on-surface-variant hover:bg-white/20">30m</button>
+<button class="py-2 rounded-xl border border-white/10 glass-btn font-label-bold text-label-bold text-on-surface-variant hover:bg-white/20">1h</button>
+<button class="py-2 rounded-xl border border-white/10 glass-btn font-label-bold text-label-bold text-on-surface-variant hover:bg-white/20">None</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Event Preferences Section -->
+<section class="mb-stack-lg">
+<h2 class="font-label-bold text-label-bold text-outline uppercase tracking-widest mb-stack-sm px-2">Event Preferences</h2>
+<div class="glass-card p-stack-md flex flex-col gap-stack-md">
+<!-- Academic -->
+<div class="flex items-center justify-between py-1">
+<div class="flex items-center gap-stack-sm">
+<div class="w-2.5 h-2.5 rounded-full bg-cat-academic"></div>
+<span class="font-body-md text-body-md">Academic</span>
+</div>
+<input checked="" class="toggle-switch" type="checkbox"/>
+</div>
+<!-- Social -->
+<div class="flex items-center justify-between py-1">
+<div class="flex items-center gap-stack-sm">
+<div class="w-2.5 h-2.5 rounded-full bg-cat-social"></div>
+<span class="font-body-md text-body-md">Social</span>
+</div>
+<input checked="" class="toggle-switch" type="checkbox"/>
+</div>
+<!-- Food -->
+<div class="flex items-center justify-between py-1">
+<div class="flex items-center gap-stack-sm">
+<div class="w-2.5 h-2.5 rounded-full bg-cat-food"></div>
+<span class="font-body-md text-body-md">Food</span>
+</div>
+<input class="toggle-switch" type="checkbox"/>
+</div>
+<!-- Sports -->
+<div class="flex items-center justify-between py-1">
+<div class="flex items-center gap-stack-sm">
+<div class="w-2.5 h-2.5 rounded-full bg-cat-sports"></div>
+<span class="font-body-md text-body-md">Sports</span>
+</div>
+<input checked="" class="toggle-switch" type="checkbox"/>
+</div>
+<!-- Arts -->
+<div class="flex items-center justify-between py-1">
+<div class="flex items-center gap-stack-sm">
+<div class="w-2.5 h-2.5 rounded-full bg-cat-arts"></div>
+<span class="font-body-md text-body-md">Arts</span>
+</div>
+<input class="toggle-switch" type="checkbox"/>
+</div>
+</div>
+</section>
+<!-- Save Changes Action -->
+<section class="mb-stack-lg">
+<button class="w-full bg-primary text-on-primary py-4 rounded-2xl font-headline-sm-mobile shadow-lg active:scale-95 transition-all duration-200 border border-white/10">
+    Save Changes
+  </button>
+</section>
+</main>
+<script>
+        // Micro-interaction for back button
+        document.querySelector('[data-icon="arrow_back"]').parentElement.addEventListener('click', () => {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                console.log('Navigating back...');
+            }, 300);
+        });
+
+        // Theme switching simulation
+        const themeButtons = document.querySelectorAll('.rounded-full.font-label-bold');
+        themeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                themeButtons.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+                    b.classList.add('text-on-surface-variant', 'hover:bg-white/10');
+                });
+                this.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+                this.classList.remove('text-on-surface-variant', 'hover:bg-white/10');
+            });
+        });
+    </script>
+</body></html>
