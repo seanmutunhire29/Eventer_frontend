@@ -2,9 +2,8 @@ import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as Haptics from 'expo-haptics';
 import * as Linking from 'expo-linking';
-import * as WebBrowser from 'expo-web-browser';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import type { Category, Event } from '@/api/types';
 import { CategoryBadge } from '@/components/glass/CategoryChip';
@@ -78,12 +77,6 @@ export const EventDetailSheet = forwardRef<BottomSheet, EventDetailSheetProps>(
       onDismiss();
     };
 
-    const handleMoreInfo = () => {
-      if (event?.source_url) {
-        WebBrowser.openBrowserAsync(event.source_url);
-      }
-    };
-
     if (!event) return null;
 
     const badges = [];
@@ -144,13 +137,6 @@ export const EventDetailSheet = forwardRef<BottomSheet, EventDetailSheetProps>(
                   <Text style={styles.description}>{event.description}</Text>
                 </View>
               ) : null}
-
-              {event.source_url ? (
-                <Pressable onPress={handleMoreInfo} style={styles.moreInfo}>
-                  <Text style={styles.moreInfoText}>View original event page</Text>
-                  <MaterialIcons name="open-in-new" size={16} color={colors.primary} />
-                </Pressable>
-              ) : null}
             </>
           )}
         </BottomSheetScrollView>
@@ -197,14 +183,14 @@ export const EventDetailSheet = forwardRef<BottomSheet, EventDetailSheetProps>(
 
 const styles = StyleSheet.create({
   sheetBackground: {
-    backgroundColor: colors.glassFill,
+    backgroundColor: colors.surfaceBright,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     borderWidth: 0.5,
     borderColor: colors.glassBorder,
   },
   handle: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: colors.outlineVariant,
     width: 36,
   },
   content: {
@@ -254,15 +240,6 @@ const styles = StyleSheet.create({
   description: {
     ...typography.bodyLg,
   },
-  moreInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.stackSm,
-  },
-  moreInfoText: {
-    ...typography.bodyMd,
-    color: colors.primary,
-  },
   actions: {
     position: 'absolute',
     bottom: 0,
@@ -270,7 +247,7 @@ const styles = StyleSheet.create({
     right: 0,
     padding: spacing.marginMobile,
     paddingBottom: spacing.stackXl,
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: colors.surfaceBright,
     gap: spacing.stackSm,
   },
   primaryAction: {

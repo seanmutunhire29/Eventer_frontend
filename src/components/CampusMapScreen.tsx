@@ -1,8 +1,12 @@
+// @refresh reset
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet';
 import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import MapView, { Marker, Polygon, PROVIDER_DEFAULT } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -23,7 +27,9 @@ import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/spacing';
 import { typography } from '@/theme/typography';
 
-const campusGeoJson = require('../../assets/geojson/dartmouth-campus.geojson') as GeoJsonCollection;
+const campusGeoJson = require('../../assets/geojson/dartmouth-campus.json') as GeoJsonCollection;
+
+const geoJson = campusGeoJson as GeoJsonCollection;
 
 const DARTMOUTH_REGION = {
   latitude: 43.7044,
@@ -32,10 +38,15 @@ const DARTMOUTH_REGION = {
   longitudeDelta: 0.012,
 };
 
-const geoJson = campusGeoJson as GeoJsonCollection;
+// Bounding box roughly enclosing the Dartmouth College campus.
+const CAMPUS_BOUNDARIES = {
+  northEast: { latitude: 43.7125, longitude: -72.2765 },
+  southWest: { latitude: 43.6965, longitude: -72.3005 },
+};
 
 export function CampusMapScreen() {
   const insets = useSafeAreaInsets();
+  const mapRef = useRef<MapView>(null);
   const sheetRef = useRef<BottomSheet>(null);
   const filterSheetRef = useRef<BottomSheet>(null);
 
@@ -48,6 +59,7 @@ export function CampusMapScreen() {
   const [selectedCategories, setSelectedCategories] = useState<CategorySlug[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [highlightedBuildingId, setHighlightedBuildingId] = useState<string | null>(null);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const filteredEvents = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -88,13 +100,31 @@ export function CampusMapScreen() {
     );
   };
 
+  const handleMapReady = () => {
+    mapRef.current?.setMapBoundaries(
+      CAMPUS_BOUNDARIES.northEast,
+      CAMPUS_BOUNDARIES.southWest,
+    );
+  };
+
+  const renderFilterBackdrop = useCallback(
+    (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
+      <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.4} />
+    ),
+    [],
+  );
+
   return (
     <View style={styles.container}>
       <MapView
+        ref={mapRef}
         style={StyleSheet.absoluteFill}
         provider={PROVIDER_DEFAULT}
         initialRegion={DARTMOUTH_REGION}
         mapType="mutedStandard"
+        onMapReady={handleMapReady}
+        minZoomLevel={15}
+        maxZoomLevel={18}
       >
         {geoJson.features.map((feature) => {
           const featureId = getFeatureId(feature);
@@ -145,28 +175,30 @@ export function CampusMapScreen() {
         )}
       </View>
 
-      <View style={[styles.bottomBar, { bottom: insets.bottom + 24 }]}>
-        <GlassPill onPress={() => router.push('/settings')} size={48}>
-          <MaterialIcons name="settings" size={22} color={colors.onSurface} />
-        </GlassPill>
+      {!selectedEvent && (
+        <View style={[styles.bottomBar, { bottom: insets.bottom + 24 }]}>
+          <GlassPill onPress={() => router.push('/settings')} size={48}>
+            <MaterialIcons name="settings" size={22} color={colors.onSurface} />
+          </GlassPill>
 
-        <View style={styles.searchPill}>
-          <BlurView intensity={54} tint="light" style={StyleSheet.absoluteFill} />
-          <View style={styles.searchOverlay} />
-          <MaterialIcons name="search" size={20} color={colors.primary} />
-          <TextInput
-            value={search}
-            onChangeText={setSearch}
-            placeholder="Search events or buildings..."
-            placeholderTextColor={`${colors.onSurface}66`}
-            style={styles.searchInput}
-          />
+          <View style={styles.searchPill}>
+            <BlurView intensity={54} tint="light" style={StyleSheet.absoluteFill} />
+            <View style={styles.searchOverlay} />
+            <MaterialIcons name="search" size={20} color={colors.primary} />
+            <TextInput
+              value={search}
+              onChangeText={setSearch}
+              placeholder="Search events or buildings..."
+              placeholderTextColor={`${colors.onSurface}66`}
+              style={styles.searchInput}
+            />
+          </View>
+
+          <GlassPill onPress={() => setFilterOpen(true)} size={48}>
+            <MaterialIcons name="tune" size={22} color={colors.onSurface} />
+          </GlassPill>
         </View>
-
-        <GlassPill onPress={() => filterSheetRef.current?.expand()} size={48}>
-          <MaterialIcons name="tune" size={22} color={colors.onSurface} />
-        </GlassPill>
-      </View>
+      )}
 
       <EventDetailSheet
         ref={sheetRef}
@@ -183,9 +215,12 @@ export function CampusMapScreen() {
 
       <BottomSheet
         ref={filterSheetRef}
-        index={-1}
+        index={filterOpen ? 0 : -1}
         snapPoints={['45%']}
+        enableDynamicSizing={false}
         enablePanDownToClose
+        backdropComponent={renderFilterBackdrop}
+        onClose={() => setFilterOpen(false)}
         backgroundStyle={styles.filterSheet}
       >
         <BottomSheetScrollView contentContainerStyle={styles.filterContent}>
