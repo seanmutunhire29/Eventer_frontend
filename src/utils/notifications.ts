@@ -1,21 +1,45 @@
-import * as Notifications from 'expo-notifications';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
 
 import type { Event, ReminderOffset } from '@/api/types';
 import { deleteReminder, getReminderForEvent, saveReminder } from '@/db/repository';
 import { getReminderDate } from '@/utils/dates';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+type NotificationsModule = typeof import('expo-notifications');
+
+const isExpoGoAndroid =
+  Constants.executionEnvironment === ExecutionEnvironment.StoreClient &&
+  Platform.OS === 'android';
+
+let notificationsModule: NotificationsModule | null | undefined;
+
+async function getNotifications(): Promise<NotificationsModule | null> {
+  if (isExpoGoAndroid) return null;
+  if (notificationsModule !== undefined) return notificationsModule;
+
+  try {
+    notificationsModule = await import('expo-notifications');
+    notificationsModule.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      }),
+    });
+    return notificationsModule;
+  } catch (error) {
+    console.warn('expo-notifications unavailable:', error);
+    notificationsModule = null;
+    return null;
+  }
+}
 
 export async function requestNotificationPermissions(): Promise<boolean> {
+  const Notifications = await getNotifications();
+  if (!Notifications) return false;
+
   const { status: existing } = await Notifications.getPermissionsAsync();
   if (existing === 'granted') return true;
 
@@ -40,6 +64,9 @@ export async function scheduleEventReminder(
 
   const reminderDate = getReminderDate(event.start_time, offsetMinutes);
   if (!reminderDate) return null;
+
+  const Notifications = await getNotifications();
+  if (!Notifications) return null;
 
   const granted = await requestNotificationPermissions();
   if (!granted) return null;
@@ -73,6 +100,9 @@ export async function scheduleEventReminder(
 }
 
 export async function cancelEventReminder(eventId: string) {
+  const Notifications = await getNotifications();
+  if (!Notifications) return;
+
   const existing = await getReminderForEvent(eventId);
   if (existing?.notificationId) {
     await Notifications.cancelScheduledNotificationAsync(existing.notificationId);
@@ -81,6 +111,9 @@ export async function cancelEventReminder(eventId: string) {
 }
 
 export async function reconcileReminders(events: Event[]) {
+  const Notifications = await getNotifications();
+  if (!Notifications) return;
+
   const { getReminders } = await import('@/db/repository');
   const scheduled = await getReminders();
 
