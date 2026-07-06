@@ -7,14 +7,14 @@ import BottomSheet, {
 import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import MapView, { Marker, Polygon, PROVIDER_DEFAULT } from 'react-native-maps';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { CategorySlug, Event } from '@/api/types';
 import { EventDetailSheet } from '@/components/EventDetailSheet';
 import { LastUpdatedBanner } from '@/components/LastUpdatedBanner';
-import { CategoryChip, GlassMarker, GlassPill } from '@/components/glass';
+import { CampusWebMap, type MapMarker } from '@/components/map/CampusWebMap';
+import { CategoryChip, DayChip, GlassPill } from '@/components/glass';
 import {
   useCategories,
   useDismissedEvents,
@@ -22,31 +22,13 @@ import {
   usePreferences,
 } from '@/hooks';
 import { CATEGORY_LABELS } from '@/utils/categories';
-import { extractPolygons, getFeatureId, type GeoJsonCollection } from '@/utils/geojson';
+import { getDayFilterOptions, isSameLocalDay } from '@/utils/dates';
 import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/spacing';
 import { typography } from '@/theme/typography';
 
-const campusGeoJson = require('../../assets/geojson/dartmouth-campus.json') as GeoJsonCollection;
-
-const geoJson = campusGeoJson as GeoJsonCollection;
-
-const DARTMOUTH_REGION = {
-  latitude: 43.7044,
-  longitude: -72.2887,
-  latitudeDelta: 0.012,
-  longitudeDelta: 0.012,
-};
-
-// Bounding box roughly enclosing the Dartmouth College campus.
-const CAMPUS_BOUNDARIES = {
-  northEast: { latitude: 43.7125, longitude: -72.2765 },
-  southWest: { latitude: 43.6965, longitude: -72.3005 },
-};
-
 export function CampusMapScreen() {
   const insets = useSafeAreaInsets();
-  const mapRef = useRef<MapView>(null);
   const sheetRef = useRef<BottomSheet>(null);
   const filterSheetRef = useRef<BottomSheet>(null);
 
@@ -55,10 +37,11 @@ export function CampusMapScreen() {
   const { preferences } = usePreferences();
   const { dismissedIds, dismiss } = useDismissedEvents();
 
+  const dayOptions = useMemo(() => getDayFilterOptions(), []);
+  const [selectedDay, setSelectedDay] = useState<string>(() => dayOptions[0]?.key ?? '');
   const [search, setSearch] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<CategorySlug[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [highlightedBuildingId, setHighlightedBuildingId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
 
   const filteredEvents = useMemo(() => {
@@ -69,6 +52,7 @@ export function CampusMapScreen() {
       if (selectedCategories.length > 0 && !selectedCategories.includes(event.category)) {
         return false;
       }
+      if (selectedDay && !isSameLocalDay(event.start_time, selectedDay)) return false;
       if (!query) return true;
       const buildingName = event.building?.official_name?.toLowerCase() ?? '';
       const aliases =
@@ -80,30 +64,50 @@ export function CampusMapScreen() {
         (event.unresolved_location?.toLowerCase().includes(query) ?? false)
       );
     });
-  }, [events, dismissedIds, preferences.enabledCategories, selectedCategories, search]);
+  }, [events, dismissedIds, preferences.enabledCategories, selectedCategories, selectedDay, search]);
 
-  const mapEvents = filteredEvents.filter((event) => event.building);
+  const mapEvents = useMemo(() => filteredEvents.filter((event) => event.building), [filteredEvents]);
+
+  // One badge per building; badges with >1 event show a count indicator.
+  const markers = useMemo<MapMarker[]>(() => {
+    const groups = new Map<string, { rep: Event; count: number }>();
+    const sorted = [...mapEvents].sort((a, b) => a.start_time.localeCompare(b.start_time));
+    for (const ev of sorted) {
+      const b = ev.building!;
+      const key = b.geojson_id || `${b.lat},${b.lng}`;
+      const existing = groups.get(key);
+      if (existing) existing.count += 1;
+      else groups.set(key, { rep: ev, count: 1 });
+    }
+    return Array.from(groups.values()).map(({ rep, count }) => ({
+      id: rep.id,
+      lat: rep.building!.lat,
+      lng: rep.building!.lng,
+      category: rep.category,
+      count,
+    }));
+  }, [mapEvents]);
 
   const selectedCategory = categories.find((c) => c.slug === selectedEvent?.category);
 
-  const openEvent = (event: Event) => {
+  const openEvent = useCallback((event: Event) => {
     setSelectedEvent(event);
-    setHighlightedBuildingId(event.building?.geojson_id ?? null);
     requestAnimationFrame(() => {
       sheetRef.current?.snapToIndex(0);
     });
-  };
+  }, []);
+
+  const openEventById = useCallback(
+    (id: string) => {
+      const ev = events.find((e) => e.id === id);
+      if (ev) openEvent(ev);
+    },
+    [events, openEvent],
+  );
 
   const toggleCategoryFilter = (slug: CategorySlug) => {
     setSelectedCategories((prev) =>
       prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug],
-    );
-  };
-
-  const handleMapReady = () => {
-    mapRef.current?.setMapBoundaries(
-      CAMPUS_BOUNDARIES.northEast,
-      CAMPUS_BOUNDARIES.southWest,
     );
   };
 
@@ -116,48 +120,11 @@ export function CampusMapScreen() {
 
   return (
     <View style={styles.container}>
-      <MapView
-        ref={mapRef}
-        style={StyleSheet.absoluteFill}
-        provider={PROVIDER_DEFAULT}
-        initialRegion={DARTMOUTH_REGION}
-        mapType="mutedStandard"
-        onMapReady={handleMapReady}
-        minZoomLevel={15}
-        maxZoomLevel={18}
-      >
-        {geoJson.features.map((feature) => {
-          const featureId = getFeatureId(feature);
-          const isHighlighted = featureId === highlightedBuildingId;
-          return extractPolygons(feature).map((coordinates, index) => (
-            <Polygon
-              key={`${featureId}-${index}`}
-              coordinates={coordinates}
-              fillColor={isHighlighted ? 'rgba(0, 105, 62, 0.25)' : 'rgba(0, 105, 62, 0.05)'}
-              strokeColor={isHighlighted ? 'rgba(0, 105, 62, 0.4)' : 'rgba(0, 105, 62, 0.15)'}
-              strokeWidth={2}
-            />
-          ));
-        })}
-
-        {mapEvents.map((event) => (
-          <Marker
-            key={event.id}
-            coordinate={{
-              latitude: event.building!.lat,
-              longitude: event.building!.lng,
-            }}
-            onPress={() => openEvent(event)}
-            tracksViewChanges={false}
-          >
-            <GlassMarker
-              category={event.category}
-              selected={selectedEvent?.id === event.id}
-              onPress={() => openEvent(event)}
-            />
-          </Marker>
-        ))}
-      </MapView>
+      <CampusWebMap
+        markers={markers}
+        selectedId={selectedEvent?.id ?? null}
+        onMarkerPress={openEventById}
+      />
 
       <View style={[styles.topBanner, { top: insets.top }]}>
         <LastUpdatedBanner lastSyncedAt={lastSyncedAt} fromCache={fromCache} />
@@ -176,27 +143,46 @@ export function CampusMapScreen() {
       </View>
 
       {!selectedEvent && (
-        <View style={[styles.bottomBar, { bottom: insets.bottom + 24 }]}>
-          <GlassPill onPress={() => router.push('/settings')} size={48}>
-            <MaterialIcons name="settings" size={22} color={colors.onSurface} />
-          </GlassPill>
+        <View style={[styles.bottomWrap, { bottom: insets.bottom + 24 }]}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.dayRow}
+            contentContainerStyle={styles.dayRowContent}
+          >
+            {dayOptions.map((option) => (
+              <DayChip
+                key={option.key}
+                label={option.label}
+                active={selectedDay === option.key}
+                onPress={() => setSelectedDay(option.key)}
+              />
+            ))}
+          </ScrollView>
 
-          <View style={styles.searchPill}>
-            <BlurView intensity={54} tint="light" style={StyleSheet.absoluteFill} />
-            <View style={styles.searchOverlay} />
-            <MaterialIcons name="search" size={20} color={colors.primary} />
-            <TextInput
-              value={search}
-              onChangeText={setSearch}
-              placeholder="Search events or buildings..."
-              placeholderTextColor={`${colors.onSurface}66`}
-              style={styles.searchInput}
-            />
+          <View style={styles.navBar}>
+            <BlurView intensity={60} tint="light" style={StyleSheet.absoluteFill} />
+            <View style={styles.navOverlay} />
+
+            <GlassPill onPress={() => router.push('/settings')} size={44}>
+              <MaterialIcons name="settings" size={22} color={colors.onSurface} />
+            </GlassPill>
+
+            <View style={styles.searchPill}>
+              <MaterialIcons name="search" size={20} color={colors.primary} />
+              <TextInput
+                value={search}
+                onChangeText={setSearch}
+                placeholder="Search events or buildings..."
+                placeholderTextColor={`${colors.onSurface}66`}
+                style={styles.searchInput}
+              />
+            </View>
+
+            <GlassPill onPress={() => setFilterOpen(true)} size={44}>
+              <MaterialIcons name="tune" size={22} color={colors.onSurface} />
+            </GlassPill>
           </View>
-
-          <GlassPill onPress={() => setFilterOpen(true)} size={48}>
-            <MaterialIcons name="tune" size={22} color={colors.onSurface} />
-          </GlassPill>
         </View>
       )}
 
@@ -208,7 +194,6 @@ export function CampusMapScreen() {
         sheetIndex={selectedEvent ? 0 : -1}
         onDismiss={() => {
           setSelectedEvent(null);
-          setHighlightedBuildingId(null);
         }}
         onHide={dismiss}
       />
@@ -285,19 +270,44 @@ const styles = StyleSheet.create({
     color: colors.error,
     textTransform: 'none',
   },
-  bottomBar: {
+  bottomWrap: {
     position: 'absolute',
     left: spacing.marginMobile,
     right: spacing.marginMobile,
+    zIndex: 20,
+  },
+  dayRow: {
+    flexGrow: 0,
+    marginBottom: spacing.gutterMobile,
+  },
+  dayRowContent: {
+    gap: spacing.stackSm,
+    paddingRight: spacing.stackMd,
+  },
+  navBar: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.gutterMobile,
-    zIndex: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: 32,
+    overflow: 'hidden',
+    borderWidth: 0.5,
+    borderColor: colors.glassBorder,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.14,
+    shadowRadius: 24,
+    elevation: 8,
+  },
+  navOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
   searchPill: {
     flex: 1,
-    height: 48,
-    borderRadius: 24,
+    height: 44,
+    borderRadius: 22,
     overflow: 'hidden',
     flexDirection: 'row',
     alignItems: 'center',
@@ -305,10 +315,7 @@ const styles = StyleSheet.create({
     gap: spacing.stackSm,
     borderWidth: 0.5,
     borderColor: colors.glassBorder,
-  },
-  searchOverlay: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: colors.glassFill,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   searchInput: {
     flex: 1,

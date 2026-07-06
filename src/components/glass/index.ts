@@ -4,3 +4,4 @@ export { GlassPill } from './GlassPill';
 export { GradientBackground } from './GradientBackground';
 export { CategoryChip, CategoryBadge } from './CategoryChip';
 export { GlassMarker } from './GlassMarker';
+export { DayChip } from './DayChip';
