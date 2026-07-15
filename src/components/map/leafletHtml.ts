@@ -63,28 +63,96 @@ export function buildLeafletHtml({ config, geojson, markers }: BuildHtmlParams):
       font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
     }
 
-    .badge {
+    .pin {
+      width: 34px;
+      height: 46px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform-origin: 50% 100%;
+      animation: pin-drop 0.38s cubic-bezier(0.22, 1, 0.36, 1) both,
+                 pin-bob 2.4s ease-in-out 0.38s infinite;
+    }
+    .pin-head {
       width: 34px;
       height: 34px;
       border-radius: 17px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.62);
+      background: linear-gradient(
+        165deg,
+        rgba(255, 255, 255, 0.88) 0%,
+        rgba(255, 255, 255, 0.55) 55%,
+        rgba(255, 255, 255, 0.42) 100%
+      );
       -webkit-backdrop-filter: blur(8px) saturate(140%);
       backdrop-filter: blur(8px) saturate(140%);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.65) inset,
+        0 4px 12px rgba(0, 0, 0, 0.16),
+        0 1px 3px rgba(0, 0, 0, 0.1);
       position: relative;
-      transition: transform 0.12s ease, background 0.12s ease;
+      z-index: 1;
+      transition: background 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
     }
-    .badge .material-symbols-outlined { font-size: 20px; }
-    .badge .fallback-dot { width: 14px; height: 14px; border-radius: 7px; background: currentColor; }
-    .badge-selected {
-      transform: scale(1.14);
-      background: rgba(255, 255, 255, 0.78);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+    .pin-tip {
+      width: 14px;
+      height: 14px;
+      margin-top: -8px;
+      background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.82) 0%,
+        rgba(230, 235, 232, 0.92) 100%
+      );
+      border-right: 1px solid rgba(255, 255, 255, 0.45);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow:
+        inset -1px -1px 0 rgba(0, 0, 0, 0.06),
+        1px 1px 4px rgba(0, 0, 0, 0.12);
+      transform: rotate(45deg);
+      z-index: 0;
+    }
+    .pin-shadow {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 14px;
+      height: 5px;
+      margin-left: -7px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.22);
+      filter: blur(1.5px);
+      transform: translateY(1px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .pin .material-symbols-outlined { font-size: 20px; }
+    .pin .fallback-dot { width: 14px; height: 14px; border-radius: 7px; background: currentColor; }
+    .pin-selected {
       z-index: 1000;
+      animation: pin-drop-selected 0.38s cubic-bezier(0.22, 1, 0.36, 1) both,
+                 pin-bob-selected 2.4s ease-in-out 0.38s infinite;
+    }
+    .pin-selected .pin-head {
+      background: linear-gradient(
+        165deg,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.72) 55%,
+        rgba(255, 255, 255, 0.58) 100%
+      );
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.75) inset,
+        0 6px 18px rgba(0, 0, 0, 0.26),
+        0 2px 6px rgba(0, 0, 0, 0.14);
+    }
+    .pin-selected .pin-shadow {
+      width: 18px;
+      height: 6px;
+      margin-left: -9px;
+      background: rgba(0, 0, 0, 0.28);
     }
     .badge-count {
       position: absolute;
@@ -101,6 +169,30 @@ export function buildLeafletHtml({ config, geojson, markers }: BuildHtmlParams):
       text-align: center;
       border: 1.5px solid rgba(255, 255, 255, 0.92);
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    }
+
+    @keyframes pin-drop {
+      from { opacity: 0; transform: translateY(-14px) scale(0.92); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes pin-bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @keyframes pin-drop-selected {
+      from { opacity: 0; transform: translateY(-14px) scale(1.02); }
+      to { opacity: 1; transform: translateY(0) scale(1.14); }
+    }
+    @keyframes pin-bob-selected {
+      0%, 100% { transform: translateY(0) scale(1.14); }
+      50% { transform: translateY(-3px) scale(1.14); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pin,
+      .pin-selected {
+        animation: none !important;
+      }
+      .pin-selected { transform: scale(1.14); }
     }
   </style>
 </head>
@@ -171,14 +263,19 @@ export function buildLeafletHtml({ config, geojson, markers }: BuildHtmlParams):
         return false;
       }
 
-      function badgeHtml(m, selected) {
+      function badgeHtml(m, selected, index) {
         var accent = m.color || '#00693E';
         var count = m.count > 1 ? '<span class="badge-count">' + m.count + '</span>' : '';
-        var cls = 'badge' + (selected ? ' badge-selected' : '');
-        var border = selected ? accent : 'rgba(255,255,255,0.6)';
-        return '<div class="' + cls + '" style="--accent:' + accent + ';border-color:' + border + '">' +
-          '<span class="material-symbols-outlined" style="color:' + accent + '">' + (m.glyph || 'event') + '</span>' +
-          count +
+        var cls = 'pin' + (selected ? ' pin-selected' : '');
+        var border = selected ? accent : 'rgba(255,255,255,0.7)';
+        var delay = Math.min(index || 0, 12) * 0.04;
+        return '<div class="' + cls + '" style="--accent:' + accent + ';animation-delay:' + delay + 's,' + (delay + 0.38) + 's">' +
+          '<div class="pin-head" style="border-color:' + border + '">' +
+            '<span class="material-symbols-outlined" style="color:' + accent + '">' + (m.glyph || 'event') + '</span>' +
+            count +
+          '</div>' +
+          '<div class="pin-tip" style="box-shadow:inset -1px -1px 0 rgba(0,0,0,0.06),1px 1px 4px rgba(0,0,0,0.12),0 0 0 1px ' + accent + '22"></div>' +
+          '<div class="pin-shadow"></div>' +
           '</div>';
       }
 
@@ -228,7 +325,7 @@ export function buildLeafletHtml({ config, geojson, markers }: BuildHtmlParams):
           buildingLayers[b].layer.setStyle(baseStyle);
         }
 
-        lastMarkers.forEach(function (m) {
+        lastMarkers.forEach(function (m, index) {
           for (var i = 0; i < buildingLayers.length; i++) {
             if (pointInFeature(m.lng, m.lat, buildingLayers[i].feature)) {
               buildingLayers[i].layer.setStyle(activeStyle);
@@ -238,9 +335,9 @@ export function buildLeafletHtml({ config, geojson, markers }: BuildHtmlParams):
           var selected = !!(lastSelected && m.id === lastSelected);
           var icon = L.divIcon({
             className: '',
-            html: badgeHtml(m, selected),
-            iconSize: [34, 34],
-            iconAnchor: [17, 17],
+            html: badgeHtml(m, selected, index),
+            iconSize: [34, 46],
+            iconAnchor: [17, 46],
           });
           var marker = L.marker([m.lat, m.lng], { icon: icon });
           marker.on('click', (function (id) {

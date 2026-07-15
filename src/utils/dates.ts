@@ -1,4 +1,4 @@
-import { format, isToday, isTomorrow } from 'date-fns';
+import { addDays, format, isToday, isTomorrow } from 'date-fns';
 import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
 
 const TIMEZONE = 'America/New_York';
@@ -43,16 +43,16 @@ export function getLocalDayKey(iso: string): string {
 }
 
 /**
- * Builds the day-filter chips: Today, Tomorrow, then the next 5 days by name
- * (7 days total), each keyed by its America/New_York calendar day.
+ * Builds the day-filter chips: Today, Tomorrow, then the next 3 days by name
+ * (5 days total), each keyed by its America/New_York calendar day.
  */
-export function getDayFilterOptions(count = 7): DayFilterOption[] {
-  const now = Date.now();
-  const dayMs = 24 * 60 * 60 * 1000;
+export function getDayFilterOptions(count = 5): DayFilterOption[] {
+  // toZonedTime shifts so date-fns getters reflect NY wall time; then addDays is calendar-safe.
+  const todayInNy = toZonedTime(new Date(), TIMEZONE);
   return Array.from({ length: count }, (_, i) => {
-    const date = new Date(now + i * dayMs);
-    const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : formatInTimeZone(date, TIMEZONE, 'EEE');
-    return { key: formatInTimeZone(date, TIMEZONE, 'yyyy-MM-dd'), label };
+    const date = addDays(todayInNy, i);
+    const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : format(date, 'EEE');
+    return { key: format(date, 'yyyy-MM-dd'), label };
   });
 }
 
