@@ -22,7 +22,8 @@ import {
   usePreferences,
 } from '@/hooks';
 import { CATEGORY_LABELS } from '@/utils/categories';
-import { getDayFilterOptions, isSameLocalDay } from '@/utils/dates';
+import { getDayFilterOptions } from '@/utils/dates';
+import { filterEvents } from '@/utils/eventFilters';
 import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/spacing';
 import { typography } from '@/theme/typography';
@@ -44,27 +45,17 @@ export function CampusMapScreen() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
 
-  const filteredEvents = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    return events.filter((event) => {
-      if (dismissedIds.includes(event.id)) return false;
-      if (!preferences.enabledCategories.includes(event.category)) return false;
-      if (selectedCategories.length > 0 && !selectedCategories.includes(event.category)) {
-        return false;
-      }
-      if (selectedDay && !isSameLocalDay(event.start_time, selectedDay)) return false;
-      if (!query) return true;
-      const buildingName = event.building?.official_name?.toLowerCase() ?? '';
-      const aliases =
-        event.building?.aliases.map((a) => a.alias.toLowerCase()).join(' ') ?? '';
-      return (
-        event.event_name.toLowerCase().includes(query) ||
-        buildingName.includes(query) ||
-        aliases.includes(query) ||
-        (event.unresolved_location?.toLowerCase().includes(query) ?? false)
-      );
-    });
-  }, [events, dismissedIds, preferences.enabledCategories, selectedCategories, selectedDay, search]);
+  const filteredEvents = useMemo(
+    () =>
+      filterEvents(events, {
+        dismissedIds,
+        enabledCategories: preferences.enabledCategories,
+        selectedCategories,
+        selectedDay,
+        search,
+      }),
+    [events, dismissedIds, preferences.enabledCategories, selectedCategories, selectedDay, search],
+  );
 
   const mapEvents = useMemo(() => filteredEvents.filter((event) => event.building), [filteredEvents]);
 
@@ -181,6 +172,10 @@ export function CampusMapScreen() {
 
             <GlassPill onPress={() => setFilterOpen(true)} size={44}>
               <MaterialIcons name="tune" size={22} color={colors.onSurface} />
+            </GlassPill>
+
+            <GlassPill onPress={() => router.push('/list')} size={44}>
+              <MaterialIcons name="list" size={22} color={colors.onSurface} />
             </GlassPill>
           </View>
         </View>
